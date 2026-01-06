@@ -22,11 +22,10 @@ pipeline {
         
         stage('Test Password') {
             steps {
-                echo 'Validating password checker files...'
+                echo 'Running password checker...'
                 script {
-                    bat 'dir password_checker*.py'
-                    echo "Would check password: ${params.PASSWORD}"
-                    echo 'Files validated successfully!'
+                    // Try Windows Python launcher
+                    bat "py password_checker_cli.py \"${params.PASSWORD}\""
                 }
             }
         }
