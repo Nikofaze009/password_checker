@@ -21,7 +21,7 @@ pipeline {
                 echo 'Building the application...'
                 script {
                     // You can add build steps here if needed
-                    sh 'python3 --version'
+                    bat 'python --version'
                 }
             }
         }
@@ -31,7 +31,7 @@ pipeline {
                 echo 'Running tests...'
                 script {
                     // Add test commands here
-                    sh 'python3 -m py_compile password_checker.py'
+                    bat 'python -m py_compile password_checker.py'
                 }
             }
         }
@@ -40,7 +40,7 @@ pipeline {
             steps {
                 echo 'Building Docker image...'
                 script {
-                    sh """
+                    bat """
                         docker build -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG} .
                         docker tag ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest
                     """
@@ -55,8 +55,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", 
                                     usernameVariable: 'DOCKER_USER', 
                                     passwordVariable: 'DOCKER_PASS')]) {
-                        sh """
-                            echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin ${DOCKER_REGISTRY}
+                        bat """
+                            echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin ${DOCKER_REGISTRY}
                             docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
                             docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest
                         """
@@ -69,9 +69,9 @@ pipeline {
             steps {
                 echo 'Running Docker container for verification...'
                 script {
-                    sh """
+                    bat """
                         docker run -d --name password-checker-test ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
-                        sleep 5
+                        timeout /t 5 /nobreak
                         docker logs password-checker-test
                         docker stop password-checker-test
                         docker rm password-checker-test
@@ -92,7 +92,7 @@ pipeline {
         }
         always {
             echo 'Cleaning up...'
-            sh 'docker system prune -f'
+            bat 'docker system prune -f'
         }
     }
 }
