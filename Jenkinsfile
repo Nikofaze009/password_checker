@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "password-checker"
         DOCKER_TAG = "${env.BUILD_NUMBER}"
-        DOCKER_REGISTRY = "your-docker-registry"  // Update with your registry (e.g., docker.io/username)
+        DOCKER_REGISTRY = "docker.io/nikofaze009"  // Your Docker Hub username
         DOCKER_CREDENTIALS = "docker-hub-credentials"  // Jenkins credential ID
     }
     
