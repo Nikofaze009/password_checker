@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    parameters {
+        string(name: 'PASSWORD', defaultValue: 'Test123!', description: 'Enter password to check')
+    }
+    
     stages {
         stage('Checkout') {
             steps {
@@ -16,10 +20,12 @@ pipeline {
             }
         }
         
-        stage('Test') {
+        stage('Test Password') {
             steps {
-                echo 'Running tests...'
-                echo 'All checks passed - password_checker.py is ready'
+                echo 'Running password checker...'
+                script {
+                    bat "python password_checker_cli.py ${params.PASSWORD}"
+                }
             }
         }
     }
@@ -27,7 +33,7 @@ pipeline {
     post {
         success {
             echo 'Pipeline executed successfully!'
-            echo 'Code is ready. You can now build and push Docker image manually.'
+            echo 'Password strength check completed.'
         }
         failure {
             echo 'Pipeline failed. Please check the logs.'

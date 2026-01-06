@@ -1,4 +1,5 @@
 import string
+import sys
 
 common_passwords = [
     "123456", "password", "admin", "qwerty",
@@ -27,7 +28,6 @@ def check_strength(password):
     else:
         feedback.append("Add at least one lowercase letter.")
 
-    
     if any(c.isdigit() for c in password):
         score += 2
     else:
@@ -45,29 +45,33 @@ def check_strength(password):
     return score, feedback
 
 
-while True:
-    print("\n ADVANCED PASSWORD CHECKER ")
-    password = input("Enter password (or type 'exit' to quit): ")
-
-    if password.lower() == "exit":
-        print(" Exiting program.")
-        break
-
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python password_checker_cli.py <password>")
+        sys.exit(1)
+    
+    password = sys.argv[1]
+    
+    print("\n===== ADVANCED PASSWORD CHECKER =====")
+    print(f"Testing password: {password}")
+    
     score, feedback = check_strength(password)
-
+    
     print("\n----- RESULT -----")
-    print("Password Score:", score, "/ 11")
-
+    print(f"Password Score: {score} / 11")
+    
     if score <= 4:
-        print(" Strength: WEAK")
+        print("Strength: WEAK")
     elif score <= 8:
-        print(" Strength: MEDIUM")
+        print("Strength: MEDIUM")
     else:
-        print(" Strength: STRONG")
-
+        print("Strength: STRONG")
+    
     if feedback:
         print("\nSuggestions to improve:")
         for f in feedback:
-            print("-", f)
+            print(f"  - {f}")
     else:
         print("\nGreat! Your password is secure.")
+    
+    print("=====================================\n")
