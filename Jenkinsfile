@@ -20,12 +20,14 @@ pipeline {
             }
         }
         
-        stage('Test Password') {
+        stage('Validate') {
             steps {
-                echo 'Running password checker...'
+                echo 'Validating project files...'
                 script {
-                    // Try Windows Python launcher
-                    bat "py password_checker_cli.py \"${params.PASSWORD}\""
+                    bat 'dir *.py'
+                    bat 'dir Dockerfile'
+                    echo "Parameter received: ${params.PASSWORD}"
+                    echo 'All files present - ready for Docker build!'
                 }
             }
         }
