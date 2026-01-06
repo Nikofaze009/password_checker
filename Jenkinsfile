@@ -15,19 +15,19 @@ pipeline {
         
         stage('Build') {
             steps {
-                echo 'Building the application...'
-                echo 'Code validated successfully'
+                echo 'Building Docker image...'
+                script {
+                    bat 'docker build -t password-checker-test .'
+                }
             }
         }
         
         stage('Validate') {
             steps {
-                echo 'Validating project files...'
+                echo 'Testing password checker with Docker...'
                 script {
-                    bat 'dir *.py'
-                    bat 'dir Dockerfile'
-                    echo "Parameter received: ${params.PASSWORD}"
-                    echo 'All files present - ready for Docker build!'
+                    echo "Checking password: ${params.PASSWORD}"
+                    bat "docker run --rm password-checker-test python password_checker_cli.py \"${params.PASSWORD}\""
                 }
             }
         }
@@ -36,10 +36,15 @@ pipeline {
     post {
         success {
             echo 'Pipeline executed successfully!'
-            echo 'Password strength check completed.'
+            echo 'Password strength check completed. Check the output above!'
         }
         failure {
             echo 'Pipeline failed. Please check the logs.'
+        }
+        always {
+            script {
+                bat 'docker rmi password-checker-test || exit 0'
+            }
         }
     }
 }
